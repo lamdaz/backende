@@ -13,7 +13,7 @@
         "dev": "node --watch index.js --debug",
         "main": "node --watch index.js",
         "deploy": "node --watch index.js",
-        "start": "node --watch index.js"
+        "start": "node index.js"
     },
     "author": {
         "name": "CinePro Dev Team and All contributors",
@@ -35,6 +35,9 @@
         "serverless-http": "^3.2.0",
         "unpacker": "^1.0.1",
         "wyzie-lib": "^2.2.5"
+    },
+    "engines": {
+        "node": ">=20.0.0"
     },
     "keywords": [
         "cinepro",
