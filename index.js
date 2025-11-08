@@ -17,17 +17,33 @@ import { startup } from './src/utils/startup.js';
 import { fileURLToPath } from 'url';
 
 const PORT = process.env.PORT;
-const allowedOrigins = process.env.ALLOWED_ORIGINS; // localhost is also allowed. (from any localhost port)
+// Parse ALLOWED_ORIGINS as JSON array, fallback to empty array
+let allowedOrigins = [];
+try {
+    allowedOrigins = JSON.parse(process.env.ALLOWED_ORIGINS || '[]');
+} catch (e) {
+    console.warn('Failed to parse ALLOWED_ORIGINS, using default []');
+    allowedOrigins = [];
+}
 const app = express();
 
 app.use(
     cors({
         origin: (origin, callback) => {
-            !origin ||
-            allowedOrigins.includes(origin) ||
-            /^http:\/\/localhost/.test(origin)
-                ? callback(null, true)
-                : callback(new Error('Not allowed by CORS'));
+            // Allow requests with no origin (mobile apps, curl, etc.)
+            if (!origin) return callback(null, true);
+            
+            // Allow localhost from any port
+            if (/^http:\/\/localhost/.test(origin)) return callback(null, true);
+            
+            // Allow if origin is in allowedOrigins array
+            if (allowedOrigins.includes(origin)) return callback(null, true);
+            
+            // Allow if allowedOrigins contains "*" (allow all)
+            if (allowedOrigins.includes('*')) return callback(null, true);
+            
+            // Otherwise, deny
+            callback(new Error('Not allowed by CORS'));
         }
     })
 );
