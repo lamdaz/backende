@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: cinepro-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.5
+      - key: PORT
+        generateValue: true
+      - key: TMDB_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: '["*"]'
